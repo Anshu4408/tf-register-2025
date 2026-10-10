@@ -1,57 +1,64 @@
-# React + TypeScript + Vite
+# TransfiNITTe 2025 - Admin Operations Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimal, high-performance, soothing admin portal for managing TransfiNITTe 2025 participants, team squads, payment reconciliations, and RBAC administrators.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Key Features
 
-## Expanding the ESLint configuration
+1. **Google OAuth & Strict Email Whitelisting**:
+   - Only authorized administrator emails can enter the portal.
+   - Initial superadmins can be seeded via backend `ADMIN_EMAILS` environment variable.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+2. **Role-Based Access Control (RBAC)**:
+   - **Superadmin**: Full unrestricted platform access.
+   - **Custom Admin Permissions**:
+     - `can_manage_users`: Directory browsing, profile modifications, team disassociation, participant deletion, and CSV export.
+     - `can_manage_teams`: Squad creation, member additions/removals, leadership transfer, payment status updates, and squad disbanding.
+     - `can_manage_payments`: Transaction audit logs, offline UPI/Cash manual verification, and reconciliation.
+     - `can_manage_admins`: Whitelist new Google emails and grant granular permissions.
 
-- Configure the top-level `parserOptions` property like this:
+3. **Participant Management**:
+   - Live search by Name, Email, Roll Number, or Team ID.
+   - Multi-filter by Hostel, Mess, Gender, and Team Assignment status.
+   - Quick export to CSV.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+4. **Team Squad Management**:
+   - Detailed roster inspector.
+   - Add participant directly to team by email.
+   - Transfer team leader crown.
+   - Quick payment status dropdown (Paid, Pending, Failed).
+
+5. **Payment Reconciliation**:
+   - Cashfree checkout log tracking.
+   - Manual payment verification modal (offline UPI, bank transfer, fee waivers).
+   - One-click CSV export.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Configure Environment (`admin/.env`)
+```env
+VITE_API_BASE_URL=http://localhost:8000
+VITE_GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-
+### 2. Configure Backend (`backend/.env`)
+```env
+# Comma-separated initial superadmin emails
+ADMIN_EMAILS=admin@transfinitte.com,your-email@gmail.com
 ```
 
-- Copy ENV
+### 3. Run Development Server
+```bash
+cd admin
+npm run dev
+```
+The admin portal will start at `http://localhost:5174`.
 
+### 4. Build for Production
+```bash
+npm run build
 ```
-cp .env.example .env
-```
+The static build will be placed in `admin/dist`.

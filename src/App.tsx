@@ -1,40 +1,41 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AuthProvider } from './context/AuthContext';
+import { Layout } from './components/Layout';
+import { Login } from './pages/Login';
+import { Dashboard } from './pages/Dashboard';
+import { UsersPage } from './pages/Users';
+import { TeamsPage } from './pages/Teams';
+import { PaymentsPage } from './pages/Payments';
+import { AdminsPage } from './pages/Admins';
 
-// Lazy load components for code splitting
-const Home = lazy(() => import("./components/Home"));
-const CreateTeam = lazy(() => import("./components/CreateTeam"));
-const Login = lazy(() => import("./components/Login"));
-const Profile = lazy(() => import("./components/Profile"));
-const Dashboard = lazy(() => import("./components/Dashboard"));
-const JoinTeam = lazy(() => import("./components/JoinTeam"));
-const Payment = lazy(() => import("./components/Payment"));
-const Rulebook = lazy(() => import("./components/Rulebook"));
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'placeholder-id.apps.googleusercontent.com';
 
-// Loading component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen bg-black text-white">
-    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
-  </div>
-);
+export function App() {
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Login Route */}
+            <Route path="/login" element={<Login />} />
 
-export default function App() {
-    return (
-        <div>
-            <Router>
-                <Suspense fallback={<LoadingSpinner />}>
-                    <Routes>
-                        <Route index element={<Home />}></Route>
-                        <Route path="/create-team" element={<CreateTeam />}></Route>
-                        <Route path="/join-team" element={<JoinTeam />}></Route>
-                        <Route path="/login" element={<Login />}></Route>
-                        <Route path="/profile" element={<Profile />}></Route>
-                        <Route path="/team/:teamId" element={<Dashboard />}></Route>
-                        <Route path="/:teamId/pay" element={<Payment />} />
-                        <Route path="/rulebook" element={<Rulebook />} />
-                    </Routes>
-                </Suspense>
-            </Router>
-        </div>
-    );
+            {/* Protected Admin Routes */}
+            <Route element={<Layout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/teams" element={<TeamsPage />} />
+              <Route path="/payments" element={<PaymentsPage />} />
+              <Route path="/admins" element={<AdminsPage />} />
+            </Route>
+
+            {/* Catch-all redirect */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </GoogleOAuthProvider>
+  );
 }
+
+export default App;
